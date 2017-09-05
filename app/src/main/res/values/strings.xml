@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Inventory App</string>
+
+    <string name="editor_activity_new_title">New Tool</string>
+
+    <string name="editor_activity_edit_title">Edit Tool</string>
+
+    <string name="empty_view_title_text">No tools found</string>
+
+    <string name="empty_view_subtitle_text">Try registering some tools first</string>
+
+    <string name="action_insert_dummy_data">Insert dummy data</string>
+
+    <string name="action_delete_all_entries">Delete all entries</string>
+
+    <string name="alert_delete_all_message">Do you really want to delete all entries?</string>
+
+    <string name="alert_delete_message">Do you really want to delete this entry?</string>
+
+    <string name="cancel">Cancel</string>
+
+    <string name="delete">Delete</string>
+
+    <string name="delete_error">Error while performing the delete action</string>
+
+    <string name="delete_tools_success">Tools Deleted Successfully</string>
+
+    <string name="update_tool_failed">Could not update tool.</string>
+
+    <string name="update_tool_success">Tool updated successfully</string>
+
+    <string name="save_tool_failed">Tool could not be saved</string>
+
+    <string name="save_tool_success">Tool saved successfully</string>
+
+    <string name="save">Save</string>
+</resources>
