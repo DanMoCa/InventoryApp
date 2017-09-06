@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.dan14z.inventoryapp.data.ToolContract.ToolEntry;
+import com.example.dan14z.inventoryapp.utils.PictureTools;
 
 import java.io.ByteArrayOutputStream;
 
@@ -52,6 +53,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private static Button cameraBtn;
     private static final int IMAGE_CAPTURE = 0;
+    private static final String mImagePath = "";
     private Uri imageUri;
     private ImageView mImageView;
 
@@ -97,35 +99,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
-//                    ActivityCompat.requestPermissions(EditorActivity.this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-//                    cameraBtn.callOnClick();
-//                }
-//
-//                if(ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-//                    ActivityCompat.requestPermissions(EditorActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
-//                    cameraBtn.callOnClick();
-//                }
-//
-//                if(ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-//                    ActivityCompat.requestPermissions(EditorActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_PERMISSION_CODE);
-//                    cameraBtn.callOnClick();
-//                }
-
-                if(ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED &&
-                        ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-
-                    ActivityCompat.requestPermissions(EditorActivity.this,
-                            new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                            CAMERA_PERMISSION_CODE);
-
-                    if(ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                            ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                        startCamera();
-                    }
-                }else{
-                    startCamera();
-                }
+            startCamera();
             }
         });
     }
@@ -139,24 +113,31 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     public void startCamera(){
-        Log.d("CAMERA_ACTIVITY","Starting camera on the phone");
-        String fileName = "testphoto.jpg";
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE,fileName);
-        values.put(MediaStore.Images.Media.DESCRIPTION,"Image captured by camera");
-        values.put(MediaStore.Images.Media.MIME_TYPE,"image/jpeg");
-        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY,1);
-        startActivityForResult(intent,IMAGE_CAPTURE);
+        if(PictureTools.permissionReadMemmory(this)){
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            imageUri = PictureTools.with(EditorActivity.this).getOutputMediaFileUri(PictureTools.MEDIA_TYPE_IMAGE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            startActivityForResult(intent,IMAGE_CAPTURE);
+        }
+
+//        Log.d("CAMERA_ACTIVITY","Starting camera on the phone");
+//        String fileName = "testphoto.jpg";
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE,fileName);
+//        values.put(MediaStore.Images.Media.DESCRIPTION,"Image captured by camera");
+//        values.put(MediaStore.Images.Media.MIME_TYPE,"image/jpeg");
+//        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+//        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY,1);
+//        startActivityForResult(intent,IMAGE_CAPTURE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_CAPTURE) {
             if (resultCode == RESULT_OK){
-                Log.d("CAMERA_ACTIVITY","Picture taken!!!");
-                mImageView.setImageURI(imageUri);
+                Bitmap bitmap = PictureTools.decodeSampledBitmapFromUri(PictureTools.currentPhotoPath,200,200);
+                mImageView.setImageBitmap(bitmap);
             }
         }
     }
@@ -215,6 +196,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String name = mNameEditText.getText().toString().trim();
         String brand = mBrandEditText.getText().toString().trim();
         String quantityText = mQuantityEditText.getText().toString().trim();
+        String imagePath = PictureTools.currentPhotoPath;
 
         if(mCurrentToolUri == null && TextUtils.isEmpty(name) && TextUtils.isEmpty(brand)){
             Toast.makeText(this,"Input some info before saving a new pet",Toast.LENGTH_SHORT).show();
@@ -228,6 +210,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         if(TextUtils.isEmpty(brand)){
             Toast.makeText(this,"Please input a brand",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(imagePath == null || imagePath.length() == 0){
+            Toast.makeText(this,"Please take a picture of the tool",Toast.LENGTH_SHORT).show();
+            return;
         }
 
         int quantity = 0;
@@ -244,6 +232,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(ToolEntry.COLUMN_TOOL_NAME,name);
         values.put(ToolEntry.COLUMN_TOOL_BRAND,brand);
         values.put(ToolEntry.COLUMN_TOOL_QUANTITY,quantity);
+        values.put(ToolEntry.COLUMN_TOOL_IMAGE,imagePath);
 //        if(!TextUtils.isEmpty(image.toString())){
 //            values.put(ToolEntry.COLUMN_TOOL_IMAGE,image);
 //        }
@@ -310,7 +299,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 ToolEntry._ID,
                 ToolEntry.COLUMN_TOOL_NAME,
                 ToolEntry.COLUMN_TOOL_BRAND,
-                ToolEntry.COLUMN_TOOL_QUANTITY
+                ToolEntry.COLUMN_TOOL_QUANTITY,
+                ToolEntry.COLUMN_TOOL_IMAGE
         };
 
         return new CursorLoader(this,
@@ -336,13 +326,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             String toolName = cursor.getString(nameColumnIndex);
             String toolBrand = cursor.getString(brandColumnIndex);
             int toolQuantity = cursor.getInt(quantityColumnIndex);
-            byte[] imageArray = cursor.getBlob(imageColumnIndex);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageArray,0,imageArray.length);
-//
+            String toolImage = cursor.getString(imageColumnIndex);
+
             mNameEditText.setText(toolName);
             mBrandEditText.setText(toolBrand);
             mQuantityEditText.setText(toolQuantity+"");
-            mImageView.setImageBitmap(bitmap);
+            if(toolImage != null && toolImage.length() > 0){
+                Bitmap bitmap = PictureTools.decodeSampledBitmapFromUri(toolImage,200,200);
+                mImageView.setImageBitmap(bitmap);
+            }
         }
     }
 

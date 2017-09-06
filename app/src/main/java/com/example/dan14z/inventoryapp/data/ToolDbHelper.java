@@ -12,7 +12,7 @@ import com.example.dan14z.inventoryapp.data.ToolContract.ToolEntry;
 public class ToolDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "tools.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 5;
 
     public ToolDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -23,7 +23,7 @@ public class ToolDbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_TOOLS_DATABASE = "CREATE TABLE " + ToolEntry.TABLE_NAME + "(" +
                 ToolEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ToolEntry.COLUMN_TOOL_NAME + " TEXT NOT NULL, " +
-                ToolEntry.COLUMN_TOOL_IMAGE + " BLOB, " +
+                ToolEntry.COLUMN_TOOL_IMAGE + " TEXT, " +
                 ToolEntry.COLUMN_TOOL_BRAND + " TEXT, " +
                 ToolEntry.COLUMN_TOOL_QUANTITY + " INTEGER NOT NULL DEFAULT 0);";
 
@@ -32,6 +32,8 @@ public class ToolDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ToolEntry.TABLE_NAME);
 
+        onCreate(sqLiteDatabase);
     }
 }

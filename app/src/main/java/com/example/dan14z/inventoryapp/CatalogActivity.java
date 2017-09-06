@@ -139,7 +139,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 ToolEntry._ID,
                 ToolEntry.COLUMN_TOOL_NAME,
                 ToolEntry.COLUMN_TOOL_BRAND,
-                ToolEntry.COLUMN_TOOL_QUANTITY
+                ToolEntry.COLUMN_TOOL_QUANTITY,
+                ToolEntry.COLUMN_TOOL_IMAGE
         };
 
         return new CursorLoader(this,

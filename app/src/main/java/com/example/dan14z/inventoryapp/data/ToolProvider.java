@@ -124,6 +124,11 @@ public class ToolProvider extends ContentProvider{
             throw new IllegalArgumentException("Tool quantity can't be a negative number");
         }
 
+        String image = values.getAsString(ToolEntry.COLUMN_TOOL_IMAGE);
+        if(image == null || TextUtils.isEmpty(image)){
+            throw new IllegalArgumentException("Tool requires a picture to be taken");
+        }
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         long newRowId = db.insert(ToolEntry.TABLE_NAME,null,values);
