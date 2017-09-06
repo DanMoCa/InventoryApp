@@ -97,6 +97,11 @@
     </LinearLayout>
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:minWidth="200dp"
+        android:minHeight="200dp"
+        android:maxWidth="200dp"
+        android:maxHeight="200dp"
+        android:src="@drawable/empty_wrench_image"/>
 </LinearLayout>
