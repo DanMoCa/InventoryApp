@@ -50,6 +50,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private EditText mBrandEditText;
     private EditText mQuantityEditText;
     private int mToolHasChanged = 0;
+    private boolean mHasPicture;
+    private String mCurrentPicture;
 
     private static Button cameraBtn;
     private static final int IMAGE_CAPTURE = 0;
@@ -213,9 +215,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
-        if(imagePath == null || imagePath.length() == 0){
-            Toast.makeText(this,"Please take a picture of the tool",Toast.LENGTH_SHORT).show();
-            return;
+        if(!mHasPicture){
+            if(imagePath == null || imagePath.length() == 0){
+                Toast.makeText(this,"Please take a picture of the tool",Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }else{
+            imagePath = mCurrentPicture;
         }
 
         int quantity = 0;
@@ -232,6 +238,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(ToolEntry.COLUMN_TOOL_NAME,name);
         values.put(ToolEntry.COLUMN_TOOL_BRAND,brand);
         values.put(ToolEntry.COLUMN_TOOL_QUANTITY,quantity);
+
         values.put(ToolEntry.COLUMN_TOOL_IMAGE,imagePath);
 //        if(!TextUtils.isEmpty(image.toString())){
 //            values.put(ToolEntry.COLUMN_TOOL_IMAGE,image);
@@ -331,6 +338,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mNameEditText.setText(toolName);
             mBrandEditText.setText(toolBrand);
             mQuantityEditText.setText(toolQuantity+"");
+            mHasPicture = true;
+            mCurrentPicture = toolImage;
             if(toolImage != null && toolImage.length() > 0){
                 Bitmap bitmap = PictureTools.decodeSampledBitmapFromUri(toolImage,200,200);
                 mImageView.setImageBitmap(bitmap);

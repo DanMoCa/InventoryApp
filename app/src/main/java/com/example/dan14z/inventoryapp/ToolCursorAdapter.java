@@ -54,6 +54,8 @@ public class ToolCursorAdapter extends CursorAdapter{
         if(toolImagePath != null && !TextUtils.isEmpty(toolImagePath)){
             Bitmap bitmap = PictureTools.decodeSampledBitmapFromUri(toolImagePath,100,100);
             imageView.setImageBitmap(bitmap);
+        }else{
+            imageView.setImageResource(R.drawable.empty_wrench_image);
         }
 
         nameText.setText(toolName);

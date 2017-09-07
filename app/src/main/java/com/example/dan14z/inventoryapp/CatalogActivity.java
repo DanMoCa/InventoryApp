@@ -97,6 +97,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         values.put(ToolEntry.COLUMN_TOOL_NAME,"Martillo");
         values.put(ToolEntry.COLUMN_TOOL_BRAND,"HammerDown");
         values.put(ToolEntry.COLUMN_TOOL_QUANTITY,0);
+        values.put(ToolEntry.COLUMN_TOOL_IMAGE,"");
 
         Uri newRow = getContentResolver().insert(ToolEntry.CONTENT_URI,values);
     }

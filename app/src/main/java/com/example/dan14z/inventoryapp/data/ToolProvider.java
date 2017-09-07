@@ -125,8 +125,9 @@ public class ToolProvider extends ContentProvider{
         }
 
         String image = values.getAsString(ToolEntry.COLUMN_TOOL_IMAGE);
+        Log.e("TOOLPROVIDER",image);
         if(image == null || TextUtils.isEmpty(image)){
-            throw new IllegalArgumentException("Tool requires a picture to be taken");
+//            throw new IllegalArgumentException("Tool requires a picture to be taken");
         }
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();

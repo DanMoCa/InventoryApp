@@ -103,5 +103,7 @@
         android:minHeight="200dp"
         android:maxWidth="200dp"
         android:maxHeight="200dp"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="center_horizontal"
         android:src="@drawable/empty_wrench_image"/>
 </LinearLayout>
